@@ -6,7 +6,9 @@ async function init (host, port) {
   const app = express()
 
   app.get('/', async (req, res, next) => {
-    const url = urlencode.decode(req.query.url)
+    const url = req.query.url
+      ? urlencode.decode(req.query.url)
+      : `${req.protocol}://${req.hostname}${req.url}`
     let browser
     try {
       browser = await puppeteer.launch({
