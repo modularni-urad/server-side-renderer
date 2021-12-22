@@ -1,43 +1,33 @@
 import express from 'express'
 import urlencode from 'urlencode'
-import puppeteer from 'puppeteer'
+import { loadURL } from './middleware'
 
-async function init (host, port) {
+function init () {
   const app = express()
 
-  app.get('/', async (req, res, next) => {
+  app.get('/', (req, res, next) => {
     const url = req.query.url
       ? urlencode.decode(req.query.url)
       : `${req.protocol}://${req.hostname}${req.url}`
-    let browser
-    try {
-      browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      })
-      const page = await browser.newPage()
-      await page.goto(url, { waitUntil: 'networkidle2', timeout: 4000 })
-      const html = await page.content()
+    loadURL(url).then(html => {
       res.send(html)
-    } catch (err) {
-      next(err)
-    } finally {
-      await browser.close()
-    }
+    }).catch(next)
   })
 
   app.use((err, req, res, next) => { // ERROR HANDLING
     res.send(err.toString())
   })
-  app.listen(port, host, (err) => {
-    if (err) throw err
-    console.log(`frodo do magic on ${host}:${port}`)
-  })
+  return app
 }
 
 try {
   const host = process.env.HOST || '127.0.0.1'
-  const port = process.env.PORT
-  init(host, port)
+  const port = process.env.PORT || 3000
+  const app = init()
+  app.listen(port, host, (err) => {
+    if (err) throw err
+    console.log(`frodo do magic on ${host}:${port}`)
+  })
 } catch (err) {
   console.error(err)
 }

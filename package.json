@@ -1,17 +1,16 @@
 {
   "name": "modularni-urad-server-side-renderer",
   "version": "1.0.0",
-  "description": "CDN",
+  "description": "loads webpage in virtual browser and sends the resulting html",
   "main": "server.js",
   "scripts": {
-    "start": "node -r esm -r dotenv/config server.js",
-    "startdbg": "node -r esm -r dotenv/config --inspect-brk server.js",
+    "start": "node -r esm server.js",
+    "startdbg": "node -r esm --inspect-brk server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Vaclav Klecanda <vencax77@gmail.com> (http://vxk.cz)",
   "license": "MIT",
   "dependencies": {
-    "dotenv": "^6.0.0",
     "esm": "^3.2.25",
     "express": "^4.16.2",
     "puppeteer": "^3.1.0",
